@@ -136,7 +136,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	RegisterClass(&wc);
 	HWND hwnd = CreateWindowEx(
 		WS_EX_TOPMOST | WS_EX_TOOLWINDOW,
-		"IHWBar", "IHWBar",
+		"IHWBar", 
+		"Ready for keybind input",
 		WS_POPUP,
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,
