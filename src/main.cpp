@@ -112,6 +112,27 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	return DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
+LRESULT CALLBACK KeyboardProc(int nCode, WPARAM wParam, LPARAM lParam) {
+    if (nCode == HC_ACTION && wParam == WM_KEYDOWN) {
+        KBDLLHOOKSTRUCT* p = (KBDLLHOOKSTRUCT*)lParam;
+        switch (p->vkCode) {
+			case KB_h:
+			case KB_H:
+				if (!(GetAsyncKeyState(VK_CONTROL) & 0x8000) ||
+            	(!(GetAsyncKeyState(VK_LWIN) & 0x8000) || (GetAsyncKeyState(VK_RWIN) & 0x8000))) break;
+				// hide or show bar
+				HWND hwnd = FindWindow("IHWBar", "Ready for keybind input");
+				if (IsWindowVisible(hwnd)) {
+					ShowWindow(hwnd, SW_HIDE);
+				} else {
+					ShowWindow(hwnd, SW_SHOW);
+				}
+				break;
+        }
+    }
+    return CallNextHookEx(NULL, nCode, wParam, lParam);
+}
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	if (GetConfigInt("ShowConsole", 1) == 1)
@@ -130,6 +151,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	Boot::Init(r, g, b, UserHeight, ShowConsole, tcr, tcg, tcb);
 
 	wc.hbrBackground = CreateSolidBrush(RGB(r, g, b)); // Add this line
+
+	std::cout << "Starting global keyboard hook" << std::endl;
+	HHOOK hHook = SetWindowsHookEx(WH_KEYBOARD_LL, KeyboardProc, GetModuleHandle(NULL), 0);
 
 	Boot::Welcome();
 
@@ -157,5 +181,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		DispatchMessage(&msg);
 	}
 
+	UnhookWindowsHookEx(hHook);
 	return 0;
 }

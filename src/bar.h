@@ -15,4 +15,7 @@
 #define KB_R 0x52
 #define KB_r 0x72
 
+#define KB_H 0x48
+#define KB_h 0x68
+
 #define UserDisplayWidth GetSystemMetrics(SM_CXSCREEN)

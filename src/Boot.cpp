@@ -39,5 +39,6 @@ namespace Boot
 		std::cout << "ESC: Quit" << std::endl;
 		std::cout << "F1: Open Config Editor" << std::endl;
 		std::cout << "R: Reload bar height" << std::endl;
+		std::cout << "Win+CTRL+H: Hide/Show bar" << std::endl;
 	}
 }
