@@ -119,7 +119,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		CreateConsole();
 	}
 	std::cout << "Console created! Disable it by setting ShowConsole in the config to 0." << std::endl;
-	std::cout << "Loading config from config.ihwbar" << std::endl;
+	std::cout << "Loading config from config.ihw" << std::endl;
 	WNDCLASS wc = {0};
 	wc.lpfnWndProc = WndProc;
 	wc.hInstance = hInstance;
@@ -129,14 +129,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	int r, g, b, UserHeight, ShowConsole, tcr, tcg, tcb;
 	Boot::Init(r, g, b, UserHeight, ShowConsole, tcr, tcg, tcb);
 
-	std::cout << "Red: " << r << std::endl;
-	std::cout << "Green: " << g << std::endl;
-	std::cout << "Blue: " << b << std::endl;
-	std::cout << "Bar Height: " << UserHeight << std::endl;
-
 	wc.hbrBackground = CreateSolidBrush(RGB(r, g, b)); // Add this line
 
-	std::cout << "Welcome to IHWBar!" << std::endl;
+	Boot::Welcome();
 
 	RegisterClass(&wc);
 	HWND hwnd = CreateWindowEx(

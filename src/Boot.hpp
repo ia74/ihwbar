@@ -13,6 +13,8 @@ namespace Boot
         int &tcg,
         int &tcb
     );
+
+    void Welcome();
 }
 
 #endif 
