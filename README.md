@@ -28,3 +28,11 @@ Then, you can run `build.bat` to build IHWBar.
 Example: `build` (If this doesnt work for you, `build.bat`)
 
 IHWBar will automatically compile and start.
+
+## You made it down here!
+
+Congratulations, i will now tell you what IHW stands for.
+
+**I** **H**ate **W**indows
+
+Fun, right?
