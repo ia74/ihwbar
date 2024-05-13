@@ -1,0 +1,11 @@
+[Color]
+Red=255
+Green=0
+Blue=255
+Text Red=255
+Text Green=255
+Text Blue=255
+[IHWBar]
+Bar Height=25
+ShowConsole=0
+WidgetCount=3

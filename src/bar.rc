@@ -1,0 +1,20 @@
+#include "winuser.h"
+#include "bar.h"
+
+IDD_DIALOG1 DIALOGEX 0, 0, 200, 150
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "IHWBar Configuration Editor"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,10,100,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,60,100,50,14
+    LTEXT           "Red:",IDC_STATIC,10,10,20,14
+    LTEXT           "Green:",IDC_STATIC2,10,30,20,14
+    LTEXT           "Blue:",IDC_STATIC3,10,50,20,14
+    LTEXT           "Height:",IDC_STATIC4,10,70,20,14
+    LTEXT           "Press R to reload height.",IDC_STATIC5,10,120,100,20
+    EDITTEXT        IDC_EDIT1,30,10,160,14
+    EDITTEXT        IDC_EDIT2,30,30,180,14
+    EDITTEXT        IDC_EDIT3,30,50,180,14
+    EDITTEXT        IDC_EDIT4,30,70,180,14
+END
