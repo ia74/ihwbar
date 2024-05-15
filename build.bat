@@ -46,8 +46,9 @@ goto :RUN
 :RUN
 color 07
 echo Running...
+cd %startDir%\bin
+IHWBar.exe -d
 cd %startDir%
-start bin/IHWBar.exe -d
 if errorlevel 1 goto :ERROR
 goto :EOF
 
