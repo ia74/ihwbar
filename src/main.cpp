@@ -13,6 +13,10 @@
 
 #include "UserWidgets.cpp"
 
+#include "Global.h"
+int paint_r, paint_g, paint_b, paint_tr, paint_tg, paint_tb;
+bool debug = true;
+
 #include <thread>
 
 #define IDT_TIMER1 1
@@ -26,7 +30,7 @@ void CreateConsole()
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	HINSTANCE hInstance;
-	int UserHeight;
+	int UserHeight,bw,by;
 	MINMAXINFO *mmi;
 	switch (msg)
 	{
@@ -48,7 +52,24 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			break;
 		case KB_r:
 		case KB_R:
-			SetWindowPos(hwnd, HWND_TOPMOST, CW_USEDEFAULT, CW_USEDEFAULT, UserDisplayWidth, GetConfigInt("Bar Height", 100), SWP_NOMOVE);
+			std::cout << "Reloading paint colors" << std::endl;
+			paint_r = GetConfigColor("Red", 255);
+			paint_g = GetConfigColor("Green", 255);
+			paint_b = GetConfigColor("Blue", 255);
+			paint_tr = GetConfigColor("Text Red", 0);
+			paint_tg = GetConfigColor("Text Green", 0);
+			paint_tb = GetConfigColor("Text Blue", 0);
+			std::cout << "Reloading bar position" << std::endl;
+			bw = GetConfigInt("Bar Width Offset", 0);
+			by = GetConfigInt("Bar Y", 0);
+			UserHeight = GetConfigInt("Bar Height", 25);
+			ReloadConfigs();
+			std::cout << "Setting window pos" << std::endl;
+			SetWindowPos(hwnd, HWND_TOPMOST,
+			bw / 2,
+			by,
+			UserDisplayWidth - bw,
+			UserHeight, 0);
 			break;
 		}
 		return 0;
@@ -57,14 +78,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		HDC hdc = (HDC)wParam;
 		RECT rect;
 		GetClientRect(hwnd, &rect);
-		HBRUSH hbr = CreateSolidBrush(RGB(GetConfigColor("Red", 255), GetConfigColor("Green", 255), GetConfigColor("Blue", 255))); // Change the color as needed
+		HBRUSH hbr = CreateSolidBrush(RGB(paint_r, paint_g, paint_b)); // Change the color as needed
 		FillRect(hdc, &rect, hbr);
 		DeleteObject(hbr);
 		return 1;
 	}
 	case WM_PAINT:
-	{
-
+	{ 
 		PAINTSTRUCT ps;
 		HDC hdc = BeginPaint(hwnd, &ps);
 
@@ -75,25 +95,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		HBITMAP hbmBuffer = CreateCompatibleBitmap(hdc, rect.right - rect.left, rect.bottom - rect.top);
 		HBITMAP hbmOldBuffer = (HBITMAP)SelectObject(hdcBuffer, hbmBuffer);
 
-		int r, g, b;
-		r = GetConfigColor("Red", 255);
-		g = GetConfigColor("Green", 255);
-		b = GetConfigColor("Blue", 255);
-
-		HBRUSH hbr = CreateSolidBrush(RGB(r, g, b));
+		HBRUSH hbr = CreateSolidBrush(RGB(paint_r, paint_g, paint_b));
 		FillRect(hdcBuffer, &rect, hbr);
 		DeleteObject(hbr);
 
-		time_t now = time(0);
-		char nowF[100];
-		strftime(nowF, 100, "%Y-%m-%d %H:%M:%S", localtime(&now));
-
-		SetBkMode(hdcBuffer, TRANSPARENT);
-		SetTextColor(hdcBuffer, RGB(GetConfigColor("Text Red", 0), GetConfigColor("Text Green", 0), GetConfigColor("Text Blue", 0)));
-
 		DrawUserWidgets(hwnd, hdcBuffer, rect);
-
-		DrawText(hdcBuffer, nowF, -1, &rect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 		
 		BitBlt(hdc, 0, 0, rect.right - rect.left, rect.bottom - rect.top, hdcBuffer, 0, 0, SRCCOPY);
 
@@ -138,6 +144,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	if (GetConfigInt("ShowConsole", 1) == 1)
 	{
 		CreateConsole();
+	} else if(debug) {
+		CreateConsole();
+	}
+	if (debug)
+	{
+		time_t now = time(0);
+		char nowF[100];
+		strftime(nowF, 100, "%Y-%m-%d %H:%M:%S", localtime(&now));
+		std::cout << nowF << " Console created!" << std::endl;
 	}
 	std::cout << "Console created! Disable it by setting ShowConsole in the config to 0." << std::endl;
 	std::cout << "Loading config from config.ihw" << std::endl;
@@ -145,17 +160,25 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	wc.lpfnWndProc = WndProc;
 	wc.hInstance = hInstance;
 	wc.lpszClassName = "IHWBar";
-	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wc.hCursor = LoadCursor(NULL, IDC_ARROW); 
 
-	int r, g, b, UserHeight, ShowConsole, tcr, tcg, tcb;
-	Boot::Init(r, g, b, UserHeight, ShowConsole, tcr, tcg, tcb);
+	int r, g, b, UserHeight, ShowConsole, tcr, tcg, tcb, bx, by, bw;
+	Boot::Init(r, g, b, UserHeight, ShowConsole, tcr, tcg, tcb, bx, by, bw);
 
 	wc.hbrBackground = CreateSolidBrush(RGB(r, g, b)); // Add this line
 
-	std::cout << "Starting global keyboard hook" << std::endl;
+	if (debug)
+	{
+		std::cout << "Starting global keyboard hook" << std::endl;
+	}
 	HHOOK hHook = SetWindowsHookEx(WH_KEYBOARD_LL, KeyboardProc, GetModuleHandle(NULL), 0);
 
 	Boot::Welcome();
+
+	if (debug)
+	{
+		std::cout << "Registering window class" << std::endl;
+	}
 
 	RegisterClass(&wc);
 	HWND hwnd = CreateWindowEx(
@@ -163,9 +186,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		"IHWBar", 
 		"Ready for keybind input",
 		WS_POPUP,
-		CW_USEDEFAULT,
-		CW_USEDEFAULT,
-		UserDisplayWidth,
+		bw / 2,
+		by,
+		UserDisplayWidth - bw,
 		UserHeight,
 		NULL,
 		NULL,
@@ -180,6 +203,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
+	if(GetConfigInt("ShowConsole", 1) == 1) std::cout << "Bye!" << std::endl;
+	FreeConsole();
 
 	UnhookWindowsHookEx(hHook);
 	return 0;

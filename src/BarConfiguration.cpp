@@ -1,18 +1,23 @@
 #include <windows.h>
 #include "BarConfiguration.hpp"
+#include "Global.h"
+#include <iostream>
 
 int GetConfigInt(const char* key, int default_value)
 {
+	if (debug)std::cout << "[CONFIG] Getting " << key << ":int from " << CONFIG_FILE << "\n";
 	return GetPrivateProfileInt(GENERAL_SECTION, key, default_value, CONFIG_FILE);
 }
 
 int GetConfigColor(const char* key, int default_value)
 {
+	if (debug)std::cout << "[CONFIG] Getting " << key << ":col from " << CONFIG_FILE << "\n";
 	return GetPrivateProfileInt("Color", key, default_value, CONFIG_FILE);
 }
 
 const char* GetConfigString(const char* key, const char* default_value)
 {
+	if (debug)std::cout << "[CONFIG] Getting " << key << ":str from " << CONFIG_FILE << "\n";
 	static char buffer[256];
 	GetPrivateProfileString(GENERAL_SECTION, key, default_value, buffer, 256, CONFIG_FILE);
 	return buffer;

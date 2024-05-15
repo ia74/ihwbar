@@ -11,7 +11,10 @@ namespace Boot
         int &sc,
         int &tcr,
         int &tcg,
-        int &tcb
+        int &tcb,
+        int &bx,
+        int &by,
+        int &bw
     );
 
     void Welcome();

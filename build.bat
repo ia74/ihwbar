@@ -49,4 +49,9 @@ start bin/IHWBar.exe
 if errorlevel 1 goto :ERROR
 goto :EOF
 
+:ERROR
+echo Errorwhile Compilgin
+color 07
+cd C:\Users\Aiden\Documents\Code\test-win-bar
+
 :EOF

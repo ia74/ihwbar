@@ -4,35 +4,14 @@
 #include <thread>
 #include <mutex>
 #include <map>
+#include <iostream>
+#include "Global.h"
 
 char *cfg_FILE_W = ".\\widgets.ihw";
 char *GENERAL_SECTION_W = "Widget1";
 
-std::map<std::string, std::string> config;
-std::mutex configMutex;
-
-void WriteConfigToMemory(const std::string& key, const std::string& value) {
-    std::lock_guard<std::mutex> lock(configMutex);
-    config[key] = value;
-}
-
-
-int GetcfgInt(char *key, int default_value)
-{
-	return GetPrivateProfileInt(GENERAL_SECTION_W, key, default_value, cfg_FILE_W);
-}
-
-int GetcfgColor(char *key, int default_value)
-{
-	return GetPrivateProfileInt("Color", key, default_value, cfg_FILE_W);
-}
-
-const char *GetcfgString(char *key, const char *default_value)
-{
-	static char buffer[256];
-	GetPrivateProfileString(GENERAL_SECTION_W, key, default_value, buffer, 256, cfg_FILE_W);
-	return buffer;
-}
+std::map<std::string, int> cacheWidgetIntConfig;
+std::map<std::string, std::string> cacheWidgetStrConfig;
 
 BOOL WritecfgInt(char *key, int value)
 {
@@ -53,12 +32,48 @@ BOOL WritecfgString(const char *key, const char *value)
 	return WritePrivateProfileString(GENERAL_SECTION_W, key, value, cfg_FILE_W);
 }
 
-void SaveConfigToDisk() {
-    std::lock_guard<std::mutex> lock(configMutex);
-    for (const auto& pair : config) {
-        // Replace this with your actual function to write to disk
-        WritecfgString(pair.first.c_str(), pair.second.c_str());
-    }
+int GetcfgInt(char *key, int default_value)
+{
+	std::string keyStr = key;
+	keyStr += GENERAL_SECTION_W;
+	if (cacheWidgetIntConfig.count(keyStr)) return cacheWidgetIntConfig.at(keyStr);
+	else {
+		if (debug) std::cout << "[WConfig] " << keyStr << ":int not found, loading disk" << std::endl;
+		int gotten = GetPrivateProfileInt(GENERAL_SECTION_W, key, default_value, cfg_FILE_W);
+		if(gotten == default_value) WritecfgInt(key, default_value);
+		cacheWidgetIntConfig.insert({keyStr, gotten});
+		return gotten;
+	}
+}
+
+int GetcfgColor(char *key, int default_value)
+{
+	std::string keyStr = key;
+	keyStr += GENERAL_SECTION_W;
+	if (cacheWidgetIntConfig.count(keyStr)) return cacheWidgetIntConfig.at(keyStr);
+	else {
+		if (debug) std::cout << "[WConfig] " << keyStr << ":color not found, loading disk" << std::endl;
+		int gotten = GetPrivateProfileInt(GENERAL_SECTION_W, key, default_value, cfg_FILE_W);
+		if(gotten == default_value) WritecfgColor(key, default_value);
+		cacheWidgetIntConfig.insert({keyStr, gotten});
+		return gotten;
+	}
+}
+
+std::string GetcfgString(char *key, const char *default_value)
+{
+	std::string keyStr = key;
+	keyStr += GENERAL_SECTION_W;
+	if (cacheWidgetStrConfig.count(keyStr)) return cacheWidgetStrConfig.at(keyStr);
+	else {
+		if (debug) std::cout << "[WConfig] " << keyStr << ":str not found, loading disk" << std::endl;
+		char buffer[256];
+		GetPrivateProfileString(GENERAL_SECTION_W, key, default_value, buffer, 256, cfg_FILE_W);
+		if(strcmp(buffer, default_value) == 0) WritecfgString(key, default_value);
+		std::string result = buffer;
+		cacheWidgetStrConfig.insert({keyStr, buffer});
+		return result;
+	}
 }
 
 std::string getActiveWindow() {
@@ -68,60 +83,55 @@ std::string getActiveWindow() {
 	return title;
 }
 
+void ReloadConfigs() {
+	std::cout << "Reloading widget configuration" << std::endl;
+	cacheWidgetIntConfig.clear();
+	cacheWidgetStrConfig.clear();
+}
+
+int widgetCount;
+
 void DrawUserWidgets(HWND hwnd, HDC hdc, RECT rect)
 {
-	int widgetCount = GetConfigInt("WidgetCount", 1);
 	for (int i = 1; i <= widgetCount; i++)
 	{
 		static char sectionName[50];
 		sprintf(sectionName, "Widget%d", i);
 		GENERAL_SECTION_W = sectionName;
 
-		int r, g, b;
-		r = GetcfgInt("Red", 0);
-		g = GetcfgInt("Green", 0);
-		b = GetcfgInt("Blue", 0);
-		int x, y;
-		x = GetcfgInt("X", 0);
-		y = GetcfgInt("Y", 0);
-		const char *type = GetcfgString("Type", "Text");
+		int r = GetcfgColor("Red", 255);
+		int g = GetcfgColor("Green", 255);
+		int b = GetcfgColor("Blue", 255);
+		int x = GetcfgInt("X", 0);
+		int y = GetcfgInt("Y", 0);
+    	std::string type = GetcfgString("Type", "Clock");
+		std::string font = GetcfgString("Font", "Arial");
 
-		std::thread t1([r,g,b,x,y,type]() {
-			WriteConfigToMemory("Red", std::to_string(r));
-			WriteConfigToMemory("Green", std::to_string(g));
-			WriteConfigToMemory("Blue", std::to_string(b));
-			WriteConfigToMemory("X", std::to_string(x));
-			WriteConfigToMemory("Y", std::to_string(y));
-			WriteConfigToMemory("Type", type);
-		});
-
-		t1.join();
-
-		if (strcmp(type, "Text") == 0)
+		if (type == "Text")
 		{
-			const char *text = GetcfgString("Text", "Hello, World!");
+			std::string text = GetcfgString("Text", "Hello, World!");
 			WidgetText textWidget;
 			textWidget.SetText(text);
-			textWidget.SetFont("Arial");
+			textWidget.SetFont(font);
 			textWidget.SetSize(20);
 			textWidget.SetColor(r, g, b);
 			textWidget.SetPosition(x, y);
 			textWidget.Draw(hdc, rect);
-		} else if(strcmp(type, "ActiveWindow") == 0) {
+		} else if(type == "ActiveWindow") {
 			WidgetText textWidget;
 			textWidget.SetText(getActiveWindow());
-			textWidget.SetFont("Arial");
+			textWidget.SetFont(font);
 			textWidget.SetSize(20);
 			textWidget.SetColor(r, g, b);
 			textWidget.SetPosition(x, y);
 			textWidget.Draw(hdc, rect);
-		} else if(strcmp(type, "Clock") == 0) {
+		} else if(type == "Clock") {
 			WidgetText textWidget;
 			time_t now = time(0);
 			char nowF[100];
 			strftime(nowF, 100, "%Y-%m-%d %H:%M:%S", localtime(&now));
 			textWidget.SetText(nowF);
-			textWidget.SetFont("Arial");
+			textWidget.SetFont(font);
 			textWidget.SetSize(20);
 			textWidget.SetColor(r, g, b);
 			textWidget.SetPosition(x, y);
@@ -129,10 +139,3 @@ void DrawUserWidgets(HWND hwnd, HDC hdc, RECT rect)
 		}
 	}
 }
-
-std::thread t2([]() {
-    while (true) {
-        std::this_thread::sleep_for(std::chrono::seconds(10));
-        SaveConfigToDisk();
-    }
-});
