@@ -4,11 +4,12 @@ A GDI C++ windows "bar" as my first C++ project.
 
 ## Keybinds
 
-You must be focused on the bar! You'll know when the ActiveWindow widget (provided you have set one up by changing the type from Text to ActiveWindow) says "Ready for keybind input"
 
-- `ESC`: Close IHWBar
+- `ESC`: Close IHWBar (while focused)
+- `F1`: Open Config Editor (while focused)
 - `Win+CTRL+H`: Hide/Show IHWBar
-- `F1`: Open Config Editor
+- `Win+CTRL+R`: Reload IHWBar
+- `Win+CTRL+ESC`: Exit IHWBar globally
 
 ## Features
 
