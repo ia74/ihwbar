@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include "BarConfiguration.hpp"
 #include "Global.h"
 namespace Boot
@@ -16,8 +17,8 @@ namespace Boot
 		int &by,
 		int &bw
 	) {
-		r = GetConfigColor("Red", 255);
-		g = GetConfigColor("Green", 255);
+		r = GetConfigColor("Red", 0);
+		g = GetConfigColor("Green", 0);
 		b = GetConfigColor("Blue", 255);
 		h = GetConfigInt("Bar Height", 25);
 		sc = GetConfigInt("ShowConsole", 1);
@@ -44,7 +45,8 @@ namespace Boot
 		paint_tr = tcr;
 		paint_tg = tcg;
 		paint_tb = tcb;
-		widgetCount = GetConfigInt("WidgetCount",3);
+		widgetCount = GetConfigInt("WidgetCount", 1);
+		WriteConfigInt("WidgetCount", widgetCount);
 		if (debug)
 		{
 			std::cout << "Red: " << r << std::endl;
@@ -58,12 +60,14 @@ namespace Boot
 			std::cout << "Bar X: " << bx << std::endl;
 			std::cout << "Bar Y: " << by << std::endl;
 			std::cout << "Bar Width Offset: " << bw << std::endl;
+			std::cout << "WidgetCount: " << widgetCount << std::endl;
 		}
 		return true;
 	}
 
 	void Welcome() {
-		std::cout << "Config loaded from config.ihw." << std::endl;
+		std::cout << "Bar config loaded from " << CONFIG_FILE << "." << std::endl;
+		std::cout << "Widget config loaded from " << cfg_FILE_W << "." << std::endl;
 		std::cout << "Welcome to IHWBar!" << std::endl << std::endl;
 		std::cout << "Keybinds:" << std::endl;
 		std::cout << "ESC: Quit" << std::endl;

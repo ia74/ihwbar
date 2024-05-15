@@ -10,7 +10,7 @@ const char* GetConfigString(const char* key, const char* default_value);
 BOOL WriteConfigInt(const char* key, int value);
 BOOL WriteConfigColor(const char* key, int value);
 BOOL WriteConfigString(const char* key, const char* value);
-static char* CONFIG_FILE = ".\\config.ihw";
+extern char* CONFIG_FILE;
 static char* GENERAL_SECTION = "IHWBar";
 
 #endif // BAR_CONFIGURATION_HPP

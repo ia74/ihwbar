@@ -7,7 +7,6 @@
 #include <iostream>
 #include "Global.h"
 
-char *cfg_FILE_W = ".\\widgets.ihw";
 char *GENERAL_SECTION_W = "Widget1";
 
 std::map<std::string, int> cacheWidgetIntConfig;
@@ -22,9 +21,10 @@ BOOL WritecfgInt(char *key, int value)
 
 BOOL WritecfgColor(char *key, int value)
 {
+
 	char buffer[10];
 	itoa(value, buffer, 10);
-	return WritePrivateProfileString("Color", key, buffer, cfg_FILE_W);
+	return WritePrivateProfileString(GENERAL_SECTION_W, key, buffer, cfg_FILE_W);
 }
 
 BOOL WritecfgString(const char *key, const char *value)

@@ -20,7 +20,7 @@ exit /b %ERRORLEVEL%
 
 :COMPILE
 echo Compiling...
-cl /nologo /EHsc User32.lib Gdi32.lib ^
+cl /nologo /EHsc User32.lib Gdi32.lib Shell32.lib ^
 	../src/main.cpp ^
 	../src/widgets/WidgetText.cpp ^
 	../src/Boot.cpp ^

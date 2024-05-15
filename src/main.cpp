@@ -16,6 +16,8 @@
 #include "Global.h"
 int paint_r, paint_g, paint_b, paint_tr, paint_tg, paint_tb;
 bool debug = false;
+char *cfg_FILE_W = ".\\widgets.ihw";
+char *CONFIG_FILE = ".\\config.ihw";
 
 #include <thread>
 
@@ -30,7 +32,7 @@ void CreateConsole()
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	HINSTANCE hInstance;
-	int UserHeight,bw,by;
+	int UserHeight, bw, by;
 	MINMAXINFO *mmi;
 	switch (msg)
 	{
@@ -66,10 +68,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			ReloadConfigs();
 			std::cout << "Setting window pos" << std::endl;
 			SetWindowPos(hwnd, HWND_TOPMOST,
-			bw / 2,
-			by,
-			UserDisplayWidth - bw,
-			UserHeight, 0);
+						 bw / 2,
+						 by,
+						 UserDisplayWidth - bw,
+						 UserHeight, 0);
 			break;
 		}
 		return 0;
@@ -118,59 +120,102 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	return DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
-LRESULT CALLBACK KeyboardProc(int nCode, WPARAM wParam, LPARAM lParam) {
-    if (nCode == HC_ACTION && wParam == WM_KEYDOWN) {
-        KBDLLHOOKSTRUCT* p = (KBDLLHOOKSTRUCT*)lParam;
+LRESULT CALLBACK KeyboardProc(int nCode, WPARAM wParam, LPARAM lParam)
+{
+	if (nCode == HC_ACTION && wParam == WM_KEYDOWN)
+	{
+		KBDLLHOOKSTRUCT *p = (KBDLLHOOKSTRUCT *)lParam;
 		HWND hwnd = FindWindow("IHWBar", "Ready for keybind input");
-        switch (p->vkCode) {
-			case KB_h:
-			case KB_H:
-				if (!(GetAsyncKeyState(VK_CONTROL) & 0x8000) ||
-            	(!(GetAsyncKeyState(VK_LWIN) & 0x8000) || (GetAsyncKeyState(VK_RWIN) & 0x8000))) break;
-				// hide or show bar
-				if (IsWindowVisible(hwnd)) {
-					ShowWindow(hwnd, SW_HIDE);
-				} else {
-					ShowWindow(hwnd, SW_SHOW);
-				}
+		switch (p->vkCode)
+		{
+		case KB_h:
+		case KB_H:
+			if (!(GetAsyncKeyState(VK_CONTROL) & 0x8000) ||
+				(!(GetAsyncKeyState(VK_LWIN) & 0x8000) || (GetAsyncKeyState(VK_RWIN) & 0x8000)))
 				break;
-			case KB_r:
-			case KB_R:
-				if (!(GetAsyncKeyState(VK_CONTROL) & 0x8000) ||
-				(!(GetAsyncKeyState(VK_LWIN) & 0x8000) || (GetAsyncKeyState(VK_RWIN) & 0x8000))) break;
-				SendMessage(hwnd, WM_KEYDOWN, KB_R, 0);
+			// hide or show bar
+			if (IsWindowVisible(hwnd))
+			{
+				ShowWindow(hwnd, SW_HIDE);
+			}
+			else
+			{
+				ShowWindow(hwnd, SW_SHOW);
+			}
+			break;
+		case KB_r:
+		case KB_R:
+			if (!(GetAsyncKeyState(VK_CONTROL) & 0x8000) ||
+				(!(GetAsyncKeyState(VK_LWIN) & 0x8000) || (GetAsyncKeyState(VK_RWIN) & 0x8000)))
 				break;
-			case VK_ESCAPE:
-				if (!(GetAsyncKeyState(VK_CONTROL) & 0x8000) ||
-				(!(GetAsyncKeyState(VK_LWIN) & 0x8000) || (GetAsyncKeyState(VK_RWIN) & 0x8000))) break;
-				SendMessage(hwnd, WM_KEYDOWN, VK_ESCAPE, 0);
+			SendMessage(hwnd, WM_KEYDOWN, KB_R, 0);
+			break;
+		case VK_ESCAPE:
+			if (!(GetAsyncKeyState(VK_CONTROL) & 0x8000) ||
+				(!(GetAsyncKeyState(VK_LWIN) & 0x8000) || (GetAsyncKeyState(VK_RWIN) & 0x8000)))
 				break;
-        }
-    }
-    return CallNextHookEx(NULL, nCode, wParam, lParam);
+			SendMessage(hwnd, WM_KEYDOWN, VK_ESCAPE, 0);
+			break;
+		}
+	}
+	return CallNextHookEx(NULL, nCode, wParam, lParam);
 }
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	if (strcmp(lpCmdLine, "-d") == 0)
-	{
-		debug = true;
-	}
 	if (GetConfigInt("ShowConsole", 1) == 1)
 	{
 		CreateConsole();
-	} else if(debug) {
+	}
+	else if (debug)
+	{
 		CreateConsole();
 	}
+
+	int argc;
+	LPWSTR *argv = CommandLineToArgvW(GetCommandLineW(), &argc);
+
+	for (int i = 0; i < argc; i++)
+	{
+		char arg[256];
+		wcstombs(arg, argv[i], 256);
+
+        if (strcmp(arg, "-d") == 0)
+        {
+            debug = true;
+        }
+        if (strcmp(arg, "-c:c") == 0 && i + 1 < argc)
+        {
+            char config_file[256];
+            wcstombs(config_file, argv[i + 1], 256);
+
+            std::cout << "Loading custom config file: " << config_file << std::endl;
+			CONFIG_FILE = new char[strlen(config_file) + 1];
+			strcpy(CONFIG_FILE, config_file);
+			i++;
+        }
+        if (strcmp(arg, "-c:w") == 0 && i + 1 < argc)
+        {
+            char widget_file[256];
+            wcstombs(widget_file, argv[i + 1], 256);
+
+            std::cout << "Loading custom widget file: " << widget_file << std::endl;
+			cfg_FILE_W = new char[strlen(widget_file) + 1];
+			strcpy(cfg_FILE_W, widget_file);
+            i++;
+        }
+	}
+
 	if (debug)
 	{
 		time_t now = time(0);
 		char nowF[100];
 		strftime(nowF, 100, "%Y-%m-%d %H:%M:%S", localtime(&now));
-		std::cout << "[DEBUG] Console created at " <<  nowF << std::endl;
+		std::cout << "[DEBUG] Console created at " << nowF << std::endl;
 	}
 	std::cout << "Console created! Disable it by setting ShowConsole in the config to 0." << std::endl;
-	std::cout << "Loading config from config.ihw" << std::endl;
+	std::cout << "Loading bar config from " << CONFIG_FILE << std::endl;
+	std::cout << "Loading widget config from " << CONFIG_FILE << std::endl;
 	WNDCLASS wc = {0};
 	wc.lpfnWndProc = WndProc;
 	wc.hInstance = hInstance;
@@ -218,7 +263,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
-	if(GetConfigInt("ShowConsole", 1) == 1) std::cout << "Bye!" << std::endl;
+	if (GetConfigInt("ShowConsole", 1) == 1)
+		std::cout << "Bye!" << std::endl;
 	FreeConsole();
 
 	UnhookWindowsHookEx(hHook);

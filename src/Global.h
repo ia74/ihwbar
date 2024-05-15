@@ -6,3 +6,4 @@ extern int paint_r,
 	paint_tg,
 	paint_tb,
 	widgetCount;
+extern char *cfg_FILE_W;
