@@ -18,6 +18,7 @@ int paint_r, paint_g, paint_b, paint_tr, paint_tg, paint_tb;
 bool debug = false;
 char *cfg_FILE_W = ".\\widgets.ihw";
 char *CONFIG_FILE = ".\\config.ihw";
+double version = 1.2;
 
 #include <thread>
 
@@ -254,6 +255,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		NULL,
 		hInstance,
 		NULL);
+
 	ShowWindow(hwnd, nCmdShow);
 	UpdateWindow(hwnd);
 

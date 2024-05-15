@@ -68,7 +68,7 @@ namespace Boot
 	void Welcome() {
 		std::cout << "Bar config loaded from " << CONFIG_FILE << "." << std::endl;
 		std::cout << "Widget config loaded from " << cfg_FILE_W << "." << std::endl;
-		std::cout << "Welcome to IHWBar!" << std::endl << std::endl;
+		std::cout << "Welcome to IHWBar v" << version << "!" << std::endl << std::endl;
 		std::cout << "Keybinds:" << std::endl;
 		std::cout << "ESC: Quit" << std::endl;
 		std::cout << "F1: Open Config Editor" << std::endl;
