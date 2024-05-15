@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
-#include "BarConfiguration.hpp"
-#include "Global.h"
+#include "include/BarConfiguration.hpp"
+#include "include/Global.h"
 namespace Boot
 {
 	bool Init(

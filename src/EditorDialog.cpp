@@ -1,7 +1,7 @@
 #include <windows.h>
 
-#include "bar.h"
-#include "BarConfiguration.hpp"
+#include "include/bar.h"
+#include "include/BarConfiguration.hpp"
 
 LRESULT CALLBACK DialogProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {

@@ -1,4 +1,4 @@
-#include "WidgetText.hpp"
+#include "../include/WidgetText.hpp"
 #include <windows.h>
 #include <iostream>
 

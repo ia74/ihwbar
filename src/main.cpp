@@ -5,15 +5,15 @@
 #include <io.h>
 #include <fcntl.h>
 
-#include "bar.h"
-#include "BarConfiguration.hpp"
+#include "include/bar.h"
+#include "include/BarConfiguration.hpp"
 
 #include "EditorDialog.cpp"
-#include "Boot.hpp"
+#include "include/Boot.hpp"
 
 #include "UserWidgets.cpp"
 
-#include "Global.h"
+#include "include/Global.h"
 int paint_r, paint_g, paint_b, paint_tr, paint_tg, paint_tb;
 bool debug = false;
 char *cfg_FILE_W = ".\\widgets.ihw";

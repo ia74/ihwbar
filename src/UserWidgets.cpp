@@ -1,11 +1,11 @@
 #include <windows.h>
-#include "widgets/WidgetText.hpp"
-#include "BarConfiguration.hpp"
+#include "include/WidgetText.hpp"
+#include "include/BarConfiguration.hpp"
 #include <thread>
 #include <mutex>
 #include <map>
 #include <iostream>
-#include "Global.h"
+#include "include/Global.h"
 
 char *GENERAL_SECTION_W = "Widget1";
 

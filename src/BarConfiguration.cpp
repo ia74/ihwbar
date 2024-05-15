@@ -1,6 +1,6 @@
 #include <windows.h>
-#include "BarConfiguration.hpp"
-#include "Global.h"
+#include "include/BarConfiguration.hpp"
+#include "include/Global.h"
 #include <iostream>
 
 int GetConfigInt(const char* key, int default_value)
