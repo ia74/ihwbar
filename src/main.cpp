@@ -121,18 +121,29 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 LRESULT CALLBACK KeyboardProc(int nCode, WPARAM wParam, LPARAM lParam) {
     if (nCode == HC_ACTION && wParam == WM_KEYDOWN) {
         KBDLLHOOKSTRUCT* p = (KBDLLHOOKSTRUCT*)lParam;
+		HWND hwnd = FindWindow("IHWBar", "Ready for keybind input");
         switch (p->vkCode) {
 			case KB_h:
 			case KB_H:
 				if (!(GetAsyncKeyState(VK_CONTROL) & 0x8000) ||
             	(!(GetAsyncKeyState(VK_LWIN) & 0x8000) || (GetAsyncKeyState(VK_RWIN) & 0x8000))) break;
 				// hide or show bar
-				HWND hwnd = FindWindow("IHWBar", "Ready for keybind input");
 				if (IsWindowVisible(hwnd)) {
 					ShowWindow(hwnd, SW_HIDE);
 				} else {
 					ShowWindow(hwnd, SW_SHOW);
 				}
+				break;
+			case KB_r:
+			case KB_R:
+				if (!(GetAsyncKeyState(VK_CONTROL) & 0x8000) ||
+				(!(GetAsyncKeyState(VK_LWIN) & 0x8000) || (GetAsyncKeyState(VK_RWIN) & 0x8000))) break;
+				SendMessage(hwnd, WM_KEYDOWN, KB_R, 0);
+				break;
+			case VK_ESCAPE:
+				if (!(GetAsyncKeyState(VK_CONTROL) & 0x8000) ||
+				(!(GetAsyncKeyState(VK_LWIN) & 0x8000) || (GetAsyncKeyState(VK_RWIN) & 0x8000))) break;
+				SendMessage(hwnd, WM_KEYDOWN, VK_ESCAPE, 0);
 				break;
         }
     }
