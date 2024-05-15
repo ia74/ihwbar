@@ -1,5 +1,7 @@
 @ECHO OFF
 
+set startDir=%cd%
+
 color 0a
 cls
 
@@ -21,7 +23,7 @@ exit /b %ERRORLEVEL%
 :COMPILE
 echo Compiling...
 cl /nologo /EHsc User32.lib Gdi32.lib Shell32.lib ^
-	../src/main.cpp ^
+	../src/Main.cpp ^
 	../src/widgets/WidgetText.cpp ^
 	../src/Boot.cpp ^
 	../src/BarConfiguration.cpp ^
@@ -52,6 +54,6 @@ goto :EOF
 :ERROR
 echo Errorwhile Compilgin
 color 07
-cd C:\Users\Aiden\Documents\Code\test-win-bar
+cd %startDir%
 
 :EOF
