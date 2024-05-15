@@ -15,7 +15,7 @@
 
 #include "Global.h"
 int paint_r, paint_g, paint_b, paint_tr, paint_tg, paint_tb;
-bool debug = true;
+bool debug = false;
 
 #include <thread>
 
@@ -84,7 +84,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		return 1;
 	}
 	case WM_PAINT:
-	{ 
+	{
 		PAINTSTRUCT ps;
 		HDC hdc = BeginPaint(hwnd, &ps);
 
@@ -100,7 +100,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		DeleteObject(hbr);
 
 		DrawUserWidgets(hwnd, hdcBuffer, rect);
-		
+
 		BitBlt(hdc, 0, 0, rect.right - rect.left, rect.bottom - rect.top, hdcBuffer, 0, 0, SRCCOPY);
 
 		SelectObject(hdcBuffer, hbmOldBuffer);
@@ -141,6 +141,10 @@ LRESULT CALLBACK KeyboardProc(int nCode, WPARAM wParam, LPARAM lParam) {
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
+	if (strcmp(lpCmdLine, "-d") == 0)
+	{
+		debug = true;
+	}
 	if (GetConfigInt("ShowConsole", 1) == 1)
 	{
 		CreateConsole();
@@ -152,7 +156,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		time_t now = time(0);
 		char nowF[100];
 		strftime(nowF, 100, "%Y-%m-%d %H:%M:%S", localtime(&now));
-		std::cout << nowF << " Console created!" << std::endl;
+		std::cout << "[DEBUG] Console created at " <<  nowF << std::endl;
 	}
 	std::cout << "Console created! Disable it by setting ShowConsole in the config to 0." << std::endl;
 	std::cout << "Loading config from config.ihw" << std::endl;
@@ -160,7 +164,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	wc.lpfnWndProc = WndProc;
 	wc.hInstance = hInstance;
 	wc.lpszClassName = "IHWBar";
-	wc.hCursor = LoadCursor(NULL, IDC_ARROW); 
+	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
 
 	int r, g, b, UserHeight, ShowConsole, tcr, tcg, tcb, bx, by, bw;
 	Boot::Init(r, g, b, UserHeight, ShowConsole, tcr, tcg, tcb, bx, by, bw);
@@ -183,7 +187,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	RegisterClass(&wc);
 	HWND hwnd = CreateWindowEx(
 		WS_EX_TOPMOST | WS_EX_TOOLWINDOW,
-		"IHWBar", 
+		"IHWBar",
 		"Ready for keybind input",
 		WS_POPUP,
 		bw / 2,
