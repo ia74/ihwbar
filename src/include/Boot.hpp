@@ -9,9 +9,6 @@ namespace Boot
         int &b,
         int &h,
         int &sc,
-        int &tcr,
-        int &tcg,
-        int &tcb,
         int &bx,
         int &by,
         int &bw

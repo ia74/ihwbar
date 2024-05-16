@@ -14,7 +14,7 @@
 #include "UserWidgets.cpp"
 
 #include "include/Global.h"
-int paint_r, paint_g, paint_b, paint_tr, paint_tg, paint_tb;
+int paint_r, paint_g, paint_b;
 bool debug = false;
 char *cfg_FILE_W = ".\\widgets.ihw";
 char *CONFIG_FILE = ".\\config.ihw";
@@ -55,13 +55,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			break;
 		case KB_r:
 		case KB_R:
-			std::cout << "Reloading paint colors" << std::endl;
+			std::cout << "Reloading bar background" << std::endl;
 			paint_r = GetConfigColor("Red", 255);
 			paint_g = GetConfigColor("Green", 255);
 			paint_b = GetConfigColor("Blue", 255);
-			paint_tr = GetConfigColor("Text Red", 0);
-			paint_tg = GetConfigColor("Text Green", 0);
-			paint_tb = GetConfigColor("Text Blue", 0);
 			std::cout << "Reloading bar position" << std::endl;
 			bw = GetConfigInt("Bar Width Offset", 0);
 			by = GetConfigInt("Bar Y", 0);
@@ -223,8 +220,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	wc.lpszClassName = "IHWBar";
 	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
 
-	int r, g, b, UserHeight, ShowConsole, tcr, tcg, tcb, bx, by, bw;
-	Boot::Init(r, g, b, UserHeight, ShowConsole, tcr, tcg, tcb, bx, by, bw);
+	int r, g, b, UserHeight, ShowConsole, bx, by, bw;
+	Boot::Init(r, g, b, UserHeight, ShowConsole, bx, by, bw);
 
 	wc.hbrBackground = CreateSolidBrush(RGB(r, g, b)); // Add this line
 

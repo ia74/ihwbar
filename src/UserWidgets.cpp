@@ -87,6 +87,7 @@ void ReloadConfigs() {
 	std::cout << "Reloading widget configuration" << std::endl;
 	cacheWidgetIntConfig.clear();
 	cacheWidgetStrConfig.clear();
+	widgetCount = GetPrivateProfileInt("IHWBar", "WidgetCount", 1, CONFIG_FILE);
 }
 
 int widgetCount;
