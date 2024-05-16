@@ -5,7 +5,7 @@
 #include <mutex>
 #include <map>
 #include <iostream>
-#include "include/Global.h"
+#include "include/Global.hpp"
 
 char *GENERAL_SECTION_W = "Widget1";
 

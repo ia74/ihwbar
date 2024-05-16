@@ -5,7 +5,7 @@
 #include <io.h>
 #include <fcntl.h>
 
-#include "include/bar.h"
+#include "include/Global.hpp"
 #include "include/BarConfiguration.hpp"
 
 #include "EditorDialog.cpp"
@@ -13,7 +13,7 @@
 
 #include "UserWidgets.cpp"
 
-#include "include/Global.h"
+#include "include/Global.hpp"
 int paint_r, paint_g, paint_b;
 bool debug = false;
 char *cfg_FILE_W = ".\\widgets.ihw";
@@ -126,6 +126,14 @@ LRESULT CALLBACK KeyboardProc(int nCode, WPARAM wParam, LPARAM lParam)
 		HWND hwnd = FindWindow("IHWBar", "Ready for keybind input");
 		switch (p->vkCode)
 		{
+		case KB_e:
+		case KB_E:
+			if (!(GetAsyncKeyState(VK_CONTROL) & 0x8000) ||
+				(!(GetAsyncKeyState(VK_LWIN) & 0x8000) || (GetAsyncKeyState(VK_RWIN) & 0x8000)))
+				break;
+			// open config editor
+			SendMessage(hwnd, WM_KEYDOWN, VK_F1, 0);
+			break;
 		case KB_h:
 		case KB_H:
 			if (!(GetAsyncKeyState(VK_CONTROL) & 0x8000) ||

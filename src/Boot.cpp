@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include "include/BarConfiguration.hpp"
-#include "include/Global.h"
+#include "include/Global.hpp"
 namespace Boot
 {
 	bool Init(
@@ -59,6 +59,7 @@ namespace Boot
 		std::cout << "F1: Open Config Editor" << std::endl;
 		std::cout << "R: Reload bar height" << std::endl;
 		std::cout << "Win+CTRL+H: Hide/Show bar" << std::endl;
+		std::cout << "Win+CTRL+E: Open bar config editor" << std::endl;
 		std::cout << "Win+CTRL+R: Reload bar (from anywhere)" << std::endl;
 		std::cout << "Win+CTRL+ESC: Exit bar (from anywhere)" << std::endl;
 	}

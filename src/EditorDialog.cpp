@@ -1,6 +1,6 @@
 #include <windows.h>
 
-#include "include/bar.h"
+#include "include/EditorDialog.hpp"
 #include "include/BarConfiguration.hpp"
 
 LRESULT CALLBACK DialogProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
